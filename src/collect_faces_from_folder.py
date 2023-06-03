@@ -13,7 +13,7 @@ for filename in glob.glob('img/*.jpg'):
     known_faces.append(new_face)
     face_names.append(filename.split("/")[1])
 
-unknown_image = face_recognition.load_image_file("Putin2.jpg")
+unknown_image = face_recognition.load_image_file("img/unknown_images/Putin2.jpg")
 unknown_face_encoding = face_recognition.face_encodings(unknown_image)[0]
 
 results = face_recognition.compare_faces(known_faces, unknown_face_encoding)

@@ -9,10 +9,10 @@ video_url = "Video.mov"
 # Создание объекта VideoCapture с ссылкой на видео
 video_capture = cv2.VideoCapture(0)
 
-putin_image = face_recognition.load_image_file("img/Putin.jpg")
+putin_image = face_recognition.load_image_file("img/known_images/Putin.jpg")
 putin_face_encoding = face_recognition.face_encodings(putin_image)[0]
 
-egorov_image = face_recognition.load_image_file("img/Egorov.jpg")
+egorov_image = face_recognition.load_image_file("img/known_images/Egorov.jpg")
 egorov_face_encoding = face_recognition.face_encodings(egorov_image)[0]
 
 # Create arrays of known face encodings and their names
