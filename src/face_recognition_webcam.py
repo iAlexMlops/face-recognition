@@ -7,7 +7,7 @@ from ultralytics import YOLO
 video_url = "Video.mov"
 
 # Создание объекта VideoCapture с ссылкой на видео
-video_capture = cv2.VideoCapture(video_url)
+video_capture = cv2.VideoCapture(0)
 
 putin_image = face_recognition.load_image_file("img/Putin.jpg")
 putin_face_encoding = face_recognition.face_encodings(putin_image)[0]
