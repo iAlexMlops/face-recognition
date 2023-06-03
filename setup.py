@@ -16,7 +16,9 @@ setup(
         'face_recognition==1.3.0',
         'dlib==19.22.0',
         'face_recognition_models',
-        'feast'
+        'feast',
+        'apache-airflow==2.6.1',
+        'python-dotenv'
     ],
     entry_points={
         'console_scripts': [

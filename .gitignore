@@ -6,3 +6,11 @@ skud.egg-info/
 
 feast/data/online_store.db
 feast/data/registry.db
+
+airflow/logs
+airflow/airflow.db
+airflow/airflow-webserver.pid
+airflow/webserver_config.py
+airflow/standalone_admin_password.txt
+
+images/

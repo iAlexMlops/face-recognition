@@ -7,3 +7,4 @@ ultralytics
 face_recognition==1.3.0
 dlib==19.22.0
 feast
+apache-airflow==2.6.1

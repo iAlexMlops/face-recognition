@@ -3,20 +3,26 @@
 # from skud import FeastClient
 import argparse
 
+from feast.saved_dataset import SavedDataset
+
 from skud.feast_client.feast_client import FeastClient
 
 
 class Skud:
-    def __init__(self):
-        # self.face_detector = FaceDetector()
-        # self.face_recognizer = FaceRecognizer()
-        self.feast_client = FeastClient(feast_repo_path='../../feast', feature_view_name='faces_feature_view')
+    def __init__(self,
+                 feast_repo_path,
+                 feature_view_name
+                 ):
+        self.feast_repo_path = feast_repo_path
+        self.feature_view_name = feature_view_name
+
+        self.feast_client = FeastClient(feast_repo_path=feast_repo_path, feature_view_name=feature_view_name)
 
     def generate_parquet(self):
         pass
 
-    def create_feast_dataset(self):
-        self.feast_client.create_dataset()
+    def create_feast_dataset(self) -> SavedDataset:
+        return self.feast_client.create_dataset()
 
     def run_cli(self):
         parser = argparse.ArgumentParser(description='Skud - Face Detection and Recognition System')
