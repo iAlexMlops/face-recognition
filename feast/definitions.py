@@ -18,7 +18,7 @@ f_source1 = FileSource(
 
 # Defining the first set of features
 df1_fv = FeatureView(
-    name="df1_feature_view",
+    name="faces_feature_view",
     ttl=timedelta(days=1),
     entities=[face],
     schema=[

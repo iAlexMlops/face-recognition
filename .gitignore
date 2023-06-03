@@ -2,3 +2,7 @@ runs/
 .idea/
 face_recognition-master/
 ultralytics-main/
+skud.egg-info/
+
+feast/data/online_store.db
+feast/data/registry.db
