@@ -7,7 +7,7 @@ video_url = "Video.mov"
 # Создание объекта VideoCapture с ссылкой на видео
 cap = cv2.VideoCapture(video_url)
 # cap = cv2.VideoCapture(0)
-model = YOLO("../models/CrowdHumanYoloV8n.pt")
+model = YOLO("../../skud/models/CrowdHumanYoloV8n.pt")
 
 while True:
 

@@ -1,4 +1,3 @@
-from PIL import Image
 import glob
 
 import face_recognition

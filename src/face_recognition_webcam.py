@@ -31,7 +31,7 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-model = YOLO("../models/CrowdHumanYoloV8n.pt")
+model = YOLO("../skud/models/CrowdHumanYoloV8n.pt")
 
 while True:
     # Grab a single frame of video
