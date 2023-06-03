@@ -1,6 +1,3 @@
-# from skud.face_detection.face_detection import FaceDetector
-# from skud.face_recognition.face_recognition import FaceRecognizer
-# from skud import FeastClient
 import argparse
 
 from feast.saved_dataset import SavedDataset

@@ -1,7 +1,7 @@
 # Importing dependencies
 from datetime import timedelta
 from feast import Entity, FeatureView, FileSource, ValueType, Field
-from feast.types import Float32
+from feast.types import Float32, String
 
 # Declaring an entity for the dataset
 face = Entity(
@@ -12,7 +12,7 @@ face = Entity(
 # Declaring the source of the first set of features
 f_source1 = FileSource(
     name="f_source1",
-    path=r"data/faces.parquet",
+    path=r"/Users/alexegorov/PycharmProjects/faceRecognition/feast/data/faces.parquet",
     timestamp_field="event_timestamp"
 )
 
@@ -21,7 +21,8 @@ df1_fv = FeatureView(
     name="faces_feature_view",
     ttl=timedelta(days=1),
     entities=[face],
-    schema=[
+    schema=
+    [Field(name="image_name", dtype=String)]+[
         Field(name=f"feature{i}", dtype=Float32) for i in range(1, 129)
     ],
     source=f_source1

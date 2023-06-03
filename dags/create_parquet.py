@@ -6,7 +6,6 @@ import face_recognition
 import os
 import pandas as pd
 
-
 load_dotenv('.env')
 
 
@@ -14,7 +13,6 @@ def process_images():
     image_folder = os.getenv('IMAGES_FOLDER')
     faces_data = []
 
-    loger = 0
     for filename in os.listdir(image_folder):
         image_path = os.path.join(image_folder, filename)
 
@@ -22,18 +20,14 @@ def process_images():
         face_locations = face_recognition.face_locations(image)
 
         if len(face_locations) == 1:
-            loger += 1
 
             face_encodings = face_recognition.face_encodings(image, face_locations)
             face_vector = face_encodings[0].tolist()
 
             image_name = os.path.splitext(filename)[0]
-            faces_data.append([image_name] + face_vector)
+            faces_data.append([datetime.now(), image_name] + face_vector)
 
-            if loger % 10 == 0:
-                print(f"Обработано {loger} файлов")
-
-    column_names = ['image_id'] + [f'feature_{i}' for i in range(128)]
+    column_names = ['event_timestamp', 'image_name'] + [f'feature_{i}' for i in range(128)]
     faces_df = pd.DataFrame(faces_data, columns=column_names)
 
     faces_df.to_parquet(f"{os.getenv('FEAST_REPO')}/data/faces.parquet")
