@@ -15,7 +15,8 @@ setup(
         'ultralytics',
         'face_recognition==1.3.0',
         'dlib==19.22.0',
-        'face_recognition_models'
+        'face_recognition_models',
+        'feast'
     ],
     entry_points={
         'console_scripts': [
