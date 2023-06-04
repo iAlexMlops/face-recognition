@@ -69,7 +69,6 @@ class TestProcessImages(unittest.TestCase):
 
         # TODO: fix order of dataset join_keys
         print(training_df.head())
-        os.system("rm ./feast/data/test_dataset.parquet")
 
 
 if __name__ == '__main__':

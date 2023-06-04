@@ -31,8 +31,10 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-mod_p = '../crowdhuman_yolov5m.pt'
+mod_p = '../models/crowdhuman_yolov5m.pt'
 model = torch.hub.load('ultralytics/yolov5', 'custom', path=mod_p, device='mps')
+
+frame_skipper = 0
 
 while True:
     # Grab a single frame of video
@@ -40,7 +42,7 @@ while True:
 
     # frame = cv2.imread("img/Egorov.jpg")
     # Only process every other frame of video to save time
-    if process_this_frame:
+    if frame_skipper == 0:
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -91,7 +93,10 @@ while True:
 
                 face_names.append(name)
 
-    process_this_frame = not process_this_frame
+    if frame_skipper >= 2:
+        frame_skipper = -1
+
+    frame_skipper +=1
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):

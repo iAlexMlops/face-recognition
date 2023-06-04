@@ -1,41 +1,22 @@
-import cv2
-import numpy as np
+import torch
+
 
 class FaceDetector:
-    def __init__(self, config_path, weights_path, class_names_path):
-        self.net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
-        self.class_names = self.load_class_names(class_names_path)
+    def __init__(self, model_path: str):
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, device='mps')
 
-    def load_class_names(self, class_names_path):
-        with open(class_names_path, 'r') as f:
-            class_names = f.read().splitlines()
-        return class_names
+        # TODO: add maintain of classes
+        # self.model_classes = model_classes
 
-    def detect(self, image):
-        height, width, _ = image.shape
+    def detect_face(self, image) -> list:
+        results = self.model(image)
+        df = results.pandas().xyxy[0]
 
-        blob = cv2.dnn.blobFromImage(image, 1/255.0, (416, 416), swapRB=True, crop=False)
-        self.net.setInput(blob)
+        if df.empty:
+            return []
 
-        layer_names = self.net.getLayerNames()
-        output_layers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
-
-        outputs = self.net.forward(output_layers)
-        faces = []
-        for output in outputs:
-            for detection in output:
-                scores = detection[5:]
-                class_id = np.argmax(scores)
-                confidence = scores[class_id]
-                if class_id == 0 and confidence > 0.5:
-                    center_x = int(detection[0] * width)
-                    center_y = int(detection[1] * height)
-                    face_width = int(detection[2] * width)
-                    face_height = int(detection[3] * height)
-                    x = int(center_x - face_width / 2)
-                    y = int(center_y - face_height / 2)
-
-                    face = image[y:y+face_height, x:x+face_width]
-                    faces.append(face)
+        faces_df = df[df["class"] == 1]
+        faces = [tuple([int(bbox[key]) for key in ['ymin', 'xmax', 'ymax', 'xmin']]) for bbox in
+                 faces_df.to_dict(orient='records')]
 
         return faces

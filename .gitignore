@@ -14,4 +14,4 @@ airflow/webserver_config.py
 airflow/standalone_admin_password.txt
 
 images/
-crowdhuman_yolov5m.pt
+models/crowdhuman_yolov5m.pt
