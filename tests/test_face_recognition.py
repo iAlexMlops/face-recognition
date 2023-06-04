@@ -7,7 +7,11 @@ class TestFaceRecognizer(TestCase):
     def setUp(self):
         self.feast_repo_path = "../feast"
         self.face_dataset_name = "faces_dataset"
-        self.image_for_encoding = "../update_images/5.jpg"
+        # self.image_for_encoding = "../update_images/2646.jpg"
+        # self.image_for_encoding = "../src/img/known_images/Egorov.jpg"
+        # self.image_for_encoding = "../src/img/known_images/Artem.jpg"
+        self.image_for_encoding = "../src/img/known_images/Artem2.jpg"
+        # self.image_for_encoding = "../src/img/known_images/Natasha.jpg"
         self.result_image_encoding = "../update_images/"
 
     def test_load_face_database(self):
@@ -17,10 +21,10 @@ class TestFaceRecognizer(TestCase):
         encoded_face = fr.encode(image)
         face_id = fr.recognize(encoded_face)
 
-        result_image = cv2.imread(f"{self.result_image_encoding}/{face_id}")
+        result_image = cv2.imread(f"{self.result_image_encoding}/{face_id}.jpg")
 
         cv2.imshow(self.image_for_encoding.split("/")[-1], image)
-        cv2.imshow(f"Out {str(face_id)}.jpg", image)
+        cv2.imshow(f"Out {str(face_id)}.jpg", result_image)
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
