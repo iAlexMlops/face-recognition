@@ -20,7 +20,6 @@ training_data = store.get_historical_features(
     features=features
 )
 
-
 # Storing the dataset as a local file
 dataset = store.create_saved_dataset(
     from_=training_data,
