@@ -25,9 +25,16 @@ def process_images():
             face_vector = face_encodings[0].tolist()
 
             image_name = os.path.splitext(filename)[0]
-            faces_data.append([datetime.now(), image_name] + face_vector)
+            faces_data.append([image_name, datetime.now(), image_name] + face_vector)
 
-    column_names = ['event_timestamp', 'image_name'] + [f'feature_{i}' for i in range(128)]
+        column_names = [
+                       'face_id',
+                       'event_timestamp',
+                       'image_name'
+                   ] + \
+                   [
+                       f'feature_{i}' for i in range(1, 129)
+                   ]
     faces_df = pd.DataFrame(faces_data, columns=column_names)
 
     faces_df.to_parquet(f"{os.getenv('FEAST_REPO')}/data/faces.parquet")

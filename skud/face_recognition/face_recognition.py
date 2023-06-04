@@ -1,5 +1,6 @@
 import face_recognition
 import pandas as pd
+import numpy as np
 
 from skud.feast_client.feast_client import FeastClient
 
@@ -34,10 +35,14 @@ class FaceRecognizer:
 
     def recognize(self, face_encoding):
         names = self.dataset.index.tolist()
-        features = self.dataset.values.tolist()
+        known_face_encodings = self.dataset.values.tolist()
 
-        for name, feature_list in zip(names, features):
-            matches = face_recognition.compare_faces([feature_list], face_encoding)
-            if matches[0]:
-                return name
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+
+        # Or instead, use the known face with the smallest distance to the new face
+        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+        best_match_index = np.argmin(face_distances)
+        if matches[best_match_index]:
+            return names[best_match_index]
+
         return "Unknown"
