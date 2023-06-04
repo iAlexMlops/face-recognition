@@ -2,7 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 from ultralytics import YOLO
-
+import torch
 
 video_url = "Video.mov"
 
@@ -31,7 +31,8 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-model = YOLO("../skud/models/CrowdHumanYoloV8n.pt")
+mod_p = '../crowdhuman_yolov5m.pt'
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=mod_p, device='mps')
 
 while True:
     # Grab a single frame of video
@@ -46,19 +47,22 @@ while True:
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
 
-        results = model(rgb_small_frame, device="mps")
-        result = results[0]
+        results = model(rgb_small_frame)
 
-        bboxes = np.array(result.boxes.xyxy.cpu(), dtype="int")
-        classes = np.array(result.boxes.cls.cpu(), dtype="int")
+        df = results.pandas().xyxy[0]
+        result = df[df["class"] == 1]
+
+        # print(df[df["class"] == 1])
+        # print(result[["xmin", "ymin", "xmax", "ymax"]])
+
+        bboxes = np.array(result[["xmin", "ymin", "xmax", "ymax"]], dtype="int")
+        # print(bboxes)
 
         if len(bboxes) == 0:
             continue
         else:
             face_locations = []
-            for bbox, cls in zip(bboxes, classes):
-                if cls == 0:
-                    continue
+            for bbox in bboxes:
 
                 (x1, y1, x2, y2) = bbox
 

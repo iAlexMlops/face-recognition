@@ -1,3 +1,4 @@
+import torch
 from ultralytics import YOLO
 import numpy as np
 import cv2
@@ -6,14 +7,15 @@ video_url = "Video.mov"
 
 # Создание объекта VideoCapture с ссылкой на видео
 cap = cv2.VideoCapture(video_url)
-# cap = cv2.VideoCapture(0)
-model = YOLO("../../skud/models/CrowdHumanYoloV8n.pt")
+
+mod_p = '../../crowdhuman_yolov5m.pt'
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=mod_p, device='mps')
 
 while True:
 
     ret, frame = cap.read()
 
-    results = model(frame, device="mps")
+    results = model(frame)
     result = results[0]
 
     bboxes = np.array(result.boxes.xyxy.cpu(), dtype="int")
