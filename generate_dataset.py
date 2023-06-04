@@ -4,10 +4,12 @@ from dotenv import load_dotenv
 import pandas as pd
 from datetime import datetime
 
+
 def process_images():
     image_folder = "/Users/alexegorov/PycharmProjects/faceRecognition/images"
     faces_data = []
 
+    face_id = 0
     for filename in os.listdir(image_folder):
         image_path = os.path.join(image_folder, filename)
 
@@ -24,14 +26,20 @@ def process_images():
             image_name = os.path.splitext(filename)[0]
 
             # Добавляем имя и вектор в список
-            faces_data.append([datetime.now(), image_name] + face_vector)
+
+            faces_data.append([face_id, datetime.now(), image_name] + face_vector)
+            face_id += 1
             print(faces_data[-1])
 
-    column_names = ['event_timestamp', 'image_name'] + [f'feature_{i}' for i in range(128)]
+    column_names = ['face_id', 'event_timestamp', 'image_name'] + \
+                   [f'feature_{i}' for i in range(1, 129)]
+
     faces_df = pd.DataFrame(faces_data, columns=column_names)
 
     print(faces_df.head())
     # Сохраняем DataFrame в файл faces.parquet
-    faces_df.to_parquet('/Users/alexegorov/PycharmProjects/faceRecognition/feast/data/faces.parquet')  # Укажите путь для сохранения файла
+    faces_df.to_parquet(
+        '/Users/alexegorov/PycharmProjects/faceRecognition/feast/data/faces.parquet')  # Укажите путь для сохранения файла
+
 
 process_images()

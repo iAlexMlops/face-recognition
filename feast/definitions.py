@@ -23,7 +23,7 @@ df1_fv = FeatureView(
     entities=[face],
     schema=
     [Field(name="image_name", dtype=String)]+[
-        Field(name=f"feature{i}", dtype=Float32) for i in range(1, 129)
+        Field(name=f"feature_{i}", dtype=Float32) for i in range(1, 129)
     ],
     source=f_source1
 )
