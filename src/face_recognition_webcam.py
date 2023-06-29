@@ -1,34 +1,46 @@
 import face_recognition
 import cv2
 import numpy as np
+from feast import FeatureStore
 from ultralytics import YOLO
 import torch
 
-video_url = "Video.mov"
+video_url = "../croped.mp4"
 
 # Создание объекта VideoCapture с ссылкой на видео
-video_capture = cv2.VideoCapture(0)
+# video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(video_url)
 
-putin_image = face_recognition.load_image_file("img/known_images/Putin.jpg")
-putin_face_encoding = face_recognition.face_encodings(putin_image)[0]
+store = FeatureStore(repo_path="../feast")
+df = store.get_saved_dataset(name="faces_dataset").to_df()
 
-egorov_image = face_recognition.load_image_file("img/known_images/Egorov.jpg")
-egorov_face_encoding = face_recognition.face_encodings(egorov_image)[0]
+fei_indexes = ['face_id', 'event_timestamp', 'image_name']
+features_indexes = [f'feature_{i}' for i in range(1, 129)]
+new_order = fei_indexes + features_indexes
 
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    putin_face_encoding,
-    egorov_face_encoding
-]
-known_face_names = [
-    "Vladimir Putin",
-    "Alex Egorov"
-]
+df = df.reindex(columns=new_order)
+
+known_face_names = df['face_id'].tolist()
+
+columns_to_drop = ['face_id', 'event_timestamp', 'image_name']
+df = df.drop(columns=columns_to_drop)
+
+known_face_encodings = df.values.tolist()
+
+# known_face_encodings = [
+#     putin_face_encoding,
+#     egorov_face_encoding
+# ]
+# known_face_names = [
+#     "Vladimir Putin",
+#     "Alex Egorov"
+# ]
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
+face_ids_set = set()
 process_this_frame = True
 
 mod_p = '../models/crowdhuman_yolov5m.pt'
@@ -44,7 +56,10 @@ while True:
     # Only process every other frame of video to save time
     if frame_skipper == 0:
         # Resize frame of video to 1/4 size for faster face recognition processing
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        try:
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        except Exception as e:
+            continue
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
@@ -65,7 +80,6 @@ while True:
         else:
             face_locations = []
             for bbox in bboxes:
-
                 (x1, y1, x2, y2) = bbox
 
                 top = y1
@@ -90,13 +104,14 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
+                    face_ids_set.add(name)
 
                 face_names.append(name)
 
     if frame_skipper >= 2:
         frame_skipper = -1
 
-    frame_skipper +=1
+    frame_skipper += 1
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -121,6 +136,11 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+for enc_face_id in face_ids_set:
+    result_image = cv2.imread(f"../update_images/{enc_face_id}.jpg")
+    cv2.imshow(f"{enc_face_id}.jpg", result_image)
+
+cv2.waitKey(0)
 # Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
