@@ -3,6 +3,17 @@ import cv2
 from skud.face_recognition.face_recognition import FaceRecognizer
 
 
+def count_duplicates(my_list):
+    counts = {}  # Создаем пустой словарь для подсчета повторений
+    for item in my_list:
+        if item in counts:
+            counts[item] += 1  # Увеличиваем значение для существующего элемента
+        else:
+            counts[item] = 1  # Добавляем новый элемент в словарь с начальным значением 1
+
+    return counts
+
+
 class TestFaceRecognizer(TestCase):
     def setUp(self):
         self.feast_repo_path = "../feast"
@@ -18,26 +29,27 @@ class TestFaceRecognizer(TestCase):
 
         while True:
             ret, frame = video_capture.read()
-            # small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            # rgb_small_frame = small_frame[:, :, ::-1]
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+            rgb_small_frame = small_frame[:, :, ::-1]
+            if not ret:
+                continue
 
             try:
                 encoded_face = fr.encode(frame)
-                face_ids.add(fr.recognize(encoded_face))
+                face = fr.recognize(encoded_face)
+                face_ids.add(face)
+                print(face_ids)
+
+                result_image = cv2.imread(f"{self.result_image_encoding}/{face}.jpg")
+                cv2.imshow(f"Out {str(face)}.jpg", result_image)
+
             except Exception as e:
-                print("Out of range")
+                print(e)
 
             cv2.imshow('Video', frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
-        print(face_ids)
-
-        # result_image = cv2.imread(f"{self.result_image_encoding}/{face_id}.jpg")
-        #
-        # cv2.imshow(self.image_for_encoding.split("/")[-1], image)
-        # cv2.imshow(f"Out {str(face_id)}.jpg", result_image)
 
         cv2.waitKey(0)
         video_capture.release()

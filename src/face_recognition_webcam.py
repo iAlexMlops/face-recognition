@@ -5,7 +5,7 @@ from feast import FeatureStore
 from ultralytics import YOLO
 import torch
 
-video_url = "../croped.mp4"
+video_url = "../some_girl.mp4"
 
 # Создание объекта VideoCapture с ссылкой на видео
 # video_capture = cv2.VideoCapture(0)
@@ -27,20 +27,14 @@ df = df.drop(columns=columns_to_drop)
 
 known_face_encodings = df.values.tolist()
 
-# known_face_encodings = [
-#     putin_face_encoding,
-#     egorov_face_encoding
-# ]
-# known_face_names = [
-#     "Vladimir Putin",
-#     "Alex Egorov"
-# ]
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
 face_ids_set = set()
+face_ids_dict = dict()
+
 process_this_frame = True
 
 mod_p = '../models/crowdhuman_yolov5m.pt'
@@ -52,14 +46,14 @@ while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
 
+    if not ret:
+        continue
+
     # frame = cv2.imread("img/Egorov.jpg")
     # Only process every other frame of video to save time
     if frame_skipper == 0:
         # Resize frame of video to 1/4 size for faster face recognition processing
-        try:
-            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-        except Exception as e:
-            continue
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
@@ -105,6 +99,10 @@ while True:
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
                     face_ids_set.add(name)
+                    if face_ids_dict.get(name) is None:
+                        face_ids_dict[name] = 0
+                    else:
+                        face_ids_dict[name] = face_ids_dict[name] + 1
 
                 face_names.append(name)
 
@@ -129,16 +127,15 @@ while True:
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
+        result_image = cv2.imread(f"../update_images/{name}.jpg")
+        cv2.imshow(f"{name}.jpg", result_image)
+
     # Display the resulting image
     cv2.imshow('Video', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
-for enc_face_id in face_ids_set:
-    result_image = cv2.imread(f"../update_images/{enc_face_id}.jpg")
-    cv2.imshow(f"{enc_face_id}.jpg", result_image)
 
 cv2.waitKey(0)
 # Release handle to the webcam
