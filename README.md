@@ -9,7 +9,7 @@
 
 wget https://github.com/ageitgey/face_recognition/archive/refs/heads/master.zip
 unzip master.zip
-rm master.zip
+rm master.zip 
 
 wget https://github.com/ultralytics/ultralytics/archive/refs/heads/main.zip
 unzip main.zip
