@@ -3,3 +3,4 @@ models/*.pt
 datasets/*.parquet
 __pycache__/
 .DS_Store
+test_folder/

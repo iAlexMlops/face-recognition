@@ -50,10 +50,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get names of matching faces')
 
     parser.add_argument('--input_parquet_path',
-                        default='../datasets/group_encoding.parquet',
+                        default='../datasets/faces.parquet',
                         help='Path to parquet file of face encodings')
     parser.add_argument('--input_image_path',
-                        default='../images/test_group/forest.jpg',
+                        default='../images/test_group/alex_2.jpg',
                         help='Path to image to compare')
 
     args = parser.parse_args()
