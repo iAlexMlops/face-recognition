@@ -1,7 +1,9 @@
-import face_recognition
-import pandas as pd
-import numpy as np
 import argparse
+from builtins import print
+
+import face_recognition
+import numpy as np
+import pandas as pd
 
 INPUT_PARQUET_PATH = str
 INPUT_IMAGE_PATH = str
@@ -33,13 +35,9 @@ def main():
                                                         )
         best_match_index = np.argmin(face_distances)
 
-        name = "Unknown"
-        if result[best_match_index]:
-            name = df.index.values[best_match_index]
-
         name = df.index.values[best_match_index] if result[best_match_index] else "Unknown"
-
         names = get_names_of_matching_faces(df.index.values, result)
+
         print(f"Result: {result}")
         print(f"Face distances: {face_distances}")
         print(f"Names: {names}")
@@ -50,10 +48,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get names of matching faces')
 
     parser.add_argument('--input_parquet_path',
-                        default='../datasets/faces.parquet',
+                        default='../datasets/some_group.parquet',
                         help='Path to parquet file of face encodings')
     parser.add_argument('--input_image_path',
-                        default='../images/test_group/alex_2.jpg',
+                        default='../images/test_group/Yana.jpeg',
                         help='Path to image to compare')
 
     args = parser.parse_args()
